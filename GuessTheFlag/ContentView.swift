@@ -47,6 +47,9 @@ struct ContentView: View {
     @State private var numberQuestionsAnswered = 0
     @State private var endingRound = false
     
+    @State private var animationAmount = 0.0
+    @State private var selectedIndex: Int? = nil
+    
     
     var body: some View {
         ZStack {
@@ -96,6 +99,11 @@ struct ContentView: View {
                     ForEach(0..<3) { number in
                         Button {
                             flagTapped(number)
+                            selectedIndex = number
+                            withAnimation(.spring(duration: 1, bounce: 0.5)) {
+                            animationAmount = 360
+                            print(animationAmount)
+                            }
                         } label: {
                             // There are four types of shapes
                             // rectangle, rounded rectangle
@@ -112,6 +120,10 @@ struct ContentView: View {
                             // Views and modifiers: Wrap up
                             FlagImage(imageString: countries[number])
                         }
+                        .opacity(selectedIndex == nil || selectedIndex == number ? 1 : 0.25)
+                        .rotation3DEffect(
+                        .degrees(number == selectedIndex ? animationAmount : 0),
+                            axis: (x: 0.0, y: 1.0, z: 0.0))
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -158,6 +170,7 @@ struct ContentView: View {
     }
     
     func flagTapped(_ number: Int) {
+        animationAmount = 0.0
         numberQuestionsAnswered += 1
         if number == correctAnswer {
             scoreTitle = "Correct!"
@@ -180,6 +193,8 @@ struct ContentView: View {
         } else {
             countries.shuffle()
             correctAnswer = Int.random(in: 0...2)
+            selectedIndex = nil
+            animationAmount = 0
         }
     }
     
