@@ -97,12 +97,12 @@ struct ContentView: View {
                             .font(.largeTitle.weight(.semibold))
                     }
                     ForEach(0..<3) { number in
+                        let isSelected = (selectedIndex == number)
                         Button {
                             flagTapped(number)
                             selectedIndex = number
                             withAnimation(.spring(duration: 1, bounce: 0.5)) {
                             animationAmount = 360
-                            print(animationAmount)
                             }
                         } label: {
                             // There are four types of shapes
@@ -120,12 +120,14 @@ struct ContentView: View {
                             // Views and modifiers: Wrap up
                             FlagImage(imageString: countries[number])
                         }
-                        .opacity(selectedIndex == nil || selectedIndex == number ? 1 : 0.25)
+                        .opacity(selectedIndex == nil || isSelected ? 1 : 0.25)
+                        .scaleEffect(selectedIndex == nil || isSelected ? 1.0 : 0.75)
                         .rotation3DEffect(
                         .degrees(number == selectedIndex ? animationAmount : 0),
                             axis: (x: 0.0, y: 1.0, z: 0.0))
+                        .animation(.easeInOut(duration: 0.25), value: selectedIndex)
+                        }
                     }
-                }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
                 .background(.regularMaterial)
